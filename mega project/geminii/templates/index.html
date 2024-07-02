@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {%load static%}
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/391827d54c.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="{%static 'css/index.css'%}">
+  <title>Whatsapp Clone</title>
+</head>
+<body>
+  <div class="background-green"></div>
+
+
+  <div class="main-container">
+    <div class="left-container">
+
+
+    <div class="right-container">
+<!--header -->
+      <div class="header">
+        <div class="img-text">
+          <div class="user-img">
+          <img class="dp" src="https://images.pexels.com/photos/2474307/pexels-photo-2474307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="">
+          
+          
+        </div>
+          <h4>Gemini<br><span>Online</span></h4>
+        </div>
+        <div class="nav-icons">
+          <li><i class="fa-solid fa-magnifying-glass"></i></li>
+          <li><i class="fa-solid fa-ellipsis-vertical"></i></li>
+        </div>
+      </div>
+
+<!--chat-container -->
+      <div class="chat-container">
+        {% comment %} <div class="message-box my-message">
+          <p>I've been waiting to see that show asap!<br><span>07:43</span></p>
+        </div>
+        <div class="message-box friend-message">
+          <p>Ahh, I can't believe you do too!<br><span>07:45</span></p>
+        </div>
+        <div class="message-box friend-message">
+          <p>The trailer looks good<br><span>07:45</span></p>
+        </div>
+        <div class="message-box friend-message">
+          <p>I've been waiting to watch it!!<br><span>07:45</span></p>
+        </div>
+        <div class="message-box my-message">
+          <p>😐😐😐<br><span>07:46</span></p>
+        </div>
+        <div class="message-box my-message">
+          <p>Mee too! 😊<br><span>07:46</span></p>
+        </div>
+      <div class="message-box friend-message">
+          <p>We should video chat to discuss, if you're up for it!<br><span>07:48</span></p>
+        </div>
+        <div class="message-box my-message">
+          <p>Sure<br><span>07:48</span></p>
+        </div>
+        <div class="message-box my-message">
+          <p>I'm free now!<br><span>07:48</span></p>
+        </div>
+      <div class="message-box friend-message">
+          <p>Awesome! I'll start a video chat with you in a few.<br><span>07:49</span></p>
+        </div> {% endcomment %}
+      </div>
+
+<!--input-bottom -->
+      <div class="chatbox-input">
+        <i class="fa-regular fa-face-grin"></i>
+        <i class="fa-sharp fa-solid fa-paperclip"></i>
+        <input type="text" placeholder="Type a message">
+        <i class="fa-solid fa-microphone"></i>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
