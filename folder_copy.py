@@ -8,7 +8,7 @@ try :
     dest_dir = input("Enter the folder name of copied one")
     shutil.copytree(src_dir, dest_dir)
 except FileNotFoundError:
-    print("The file is incorrect")
+    print("The file is incorrect please input properly")
     
     
 
