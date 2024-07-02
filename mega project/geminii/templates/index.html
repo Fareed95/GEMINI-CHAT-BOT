@@ -1,82 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {%load static%}
+  {% load static %}
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <title>WhatsApp Clone</title>
   <script src="https://kit.fontawesome.com/391827d54c.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="{%static 'css/index.css'%}">
-  <title>Whatsapp Clone</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ 
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #ccc;
+        margin: 0;
+      }
+      .background-green {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 20%;
+        background-color: #009688;
+        z-index: -1;
+      }
+      .main-container {
+        position: relative;
+        width: 1000px;
+        max-width: 100%;
+        height: calc(100vh - 40px);
+        background: #fff;
+        display: flex;
+        box-shadow: 0px 1px 1px 0 rgba(0,0,0,0.5), 0px 2px 5px 0 rgba(0,0,0,0.6);
+      }
+      .left-container {
+        width: 30%;
+        background: #fff;
+      }
+      .right-container {
+        width: 70%;
+        background: #e5ddd5;
+        position: relative;
+      }
+      .right-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url(https://camo.githubusercontent.com/854a93c27d64274c4f8f5a0b6ec36ee1d053cfcd934eac6c63bed9eaef9764bd/68747470733a2f2f7765622e77686174736170702e636f6d2f696d672f62672d636861742d74696c652d6461726b5f61346265353132653731393562366237333364393131306234303866303735642e706e67);
+        opacity: 0.5;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 60px;
+        background: #ededed;
+        padding: 0 15px;
+      }
+      .img-text {
+        display: flex;
+        align-items: center;
+      }
+      .user-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      .dp {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .nav-icons {
+        display: flex;
+        align-items: center;
+      }
+      .nav-icons li {
+        list-style: none;
+        margin-left: 15px;
+        cursor: pointer;
+        color: #51585c;
+        font-size: 18px;
+      }
+      .chat-container {
+        position: relative;
+        width: 100%;
+        height: calc(100% - 120px); /* Adjust based on header and input height */
+        padding: 20px;
+        overflow-y: auto;
+      }
+      .message-box {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
+      }
+      .message-box p {
+        position: relative;
+        max-width: 65%;
+        padding: 12px;
+        background: #dcf8c6;
+        border-radius: 10px;
+        font-size: 14px;
+        line-height: 1.4;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .message-box.my-message p::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -12px;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, #dcf8c6 0%, #dcf8c6 50%, transparent 50%, transparent);
+      }
+      .message-box p span {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #666;
+        opacity: 0.8;
+      }
+      .chatbox-input {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 60px;
+        background: #f0f0f0;
+        padding: 0 15px;
+      }
+      .chatbox-input i {
+        font-size: 22px;
+        color: #515855;
+        cursor: pointer;
+      }
+      .chatbox-input input {
+        flex: 1;
+        border-radius: 20px;
+        padding: 10px 15px;
+        margin: 0 15px;
+        border: none;
+        outline: none;
+        font-size: 14px;
+      }
+      .chatbox-input button {
+        background-color: #009688;
+        color: #fff;
+        border: none;
+        outline: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+      .chatbox-input button:hover {
+        background-color: #00796b;
+      }
+      .loading-spinner {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+   
+  </style>
+  <script>
+    $(document).ready(function() {
+      $('#send-btn').click(function() {
+        var message = $('#message-input').val();
+        
+        // Show loading spinner
+        $('.loading-spinner').show();
+        
+        $.ajax({
+          type: 'POST',
+          url: '/send-message/',
+          data: {
+            'message': message,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+          },
+          success: function(response) {
+            // Hide loading spinner
+            $('.loading-spinner').hide();
+            
+            // Update chat container with message and response
+            $('#message-input').val('');  // Clear input field
+            $('#chat-container').append('<div class="message-box my-message"><p>' + message + '<br><span>Now: ' + response.response + '</span></p></div>');
+          },
+          error: function(xhr, status, error) {
+            console.error('Error:', error);
+            // Hide loading spinner
+            $('.loading-spinner').hide();
+          }
+        });
+      });
+    });
+  </script>
 </head>
 <body>
+  
   <div class="background-green"></div>
-
 
   <div class="main-container">
     <div class="left-container">
-
+      <!-- Left container content (if any) -->
+    </div>
 
     <div class="right-container">
-<!--header -->
+      <!-- Header -->
       <div class="header">
         <div class="img-text">
           <div class="user-img">
-          <img class="dp" src="https://images.pexels.com/photos/2474307/pexels-photo-2474307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="">
-          
-          
-        </div>
-          <h4>Gemini<br><span>Online</span></h4>
+            <img class="dp" src="https://images.pexels.com/photos/2474307/pexels-photo-2474307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="">
+          </div>
+          <h4>{{ username }}<br><span>Online</span></h4>
         </div>
         <div class="nav-icons">
-          <li><i class="fa-solid fa-magnifying-glass"></i></li>
-          <li><i class="fa-solid fa-ellipsis-vertical"></i></li>
+          <li><i class="fas fa-search"></i></li>
+          <li><i class="fas fa-ellipsis-v"></i></li>
         </div>
       </div>
 
-<!--chat-container -->
-      <div class="chat-container">
-        {% comment %} <div class="message-box my-message">
-          <p>I've been waiting to see that show asap!<br><span>07:43</span></p>
-        </div>
-        <div class="message-box friend-message">
-          <p>Ahh, I can't believe you do too!<br><span>07:45</span></p>
-        </div>
-        <div class="message-box friend-message">
-          <p>The trailer looks good<br><span>07:45</span></p>
-        </div>
-        <div class="message-box friend-message">
-          <p>I've been waiting to watch it!!<br><span>07:45</span></p>
-        </div>
-        <div class="message-box my-message">
-          <p>😐😐😐<br><span>07:46</span></p>
-        </div>
-        <div class="message-box my-message">
-          <p>Mee too! 😊<br><span>07:46</span></p>
-        </div>
-      <div class="message-box friend-message">
-          <p>We should video chat to discuss, if you're up for it!<br><span>07:48</span></p>
-        </div>
-        <div class="message-box my-message">
-          <p>Sure<br><span>07:48</span></p>
-        </div>
-        <div class="message-box my-message">
-          <p>I'm free now!<br><span>07:48</span></p>
-        </div>
-      <div class="message-box friend-message">
-          <p>Awesome! I'll start a video chat with you in a few.<br><span>07:49</span></p>
-        </div> {% endcomment %}
+      <!-- Chat container -->
+      <div id="chat-container" class="chat-container">
+        {% for chat in recent_chats %}
+          <div class="message-box my-message">
+            <p>{{ chat.message }}<br><span>Response: {{ chat.response }}</span></p>
+          </div>
+        {% endfor %}
       </div>
 
-<!--input-bottom -->
+      <!-- Input area -->
       <div class="chatbox-input">
-        <i class="fa-regular fa-face-grin"></i>
-        <i class="fa-sharp fa-solid fa-paperclip"></i>
-        <input type="text" placeholder="Type a message">
-        <i class="fa-solid fa-microphone"></i>
+        <i class="far fa-smile"></i>
+        <i class="fas fa-paperclip"></i>
+        <input id="message-input" type="text" placeholder="Type a message">
+        <button id="send-btn">Send</button>
+        <i class="fas fa-microphone"></i>
       </div>
     </div>
-
   </div>
+
+  <!-- Loading spinner -->
+  <div class="loading-spinner">
+    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+  </div>
+
 </body>
 </html>
