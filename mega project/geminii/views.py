@@ -4,7 +4,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Chat  # Import your Chat model
-from .bot_algo import bot_gemini
+# from .bot_algo import bot_gemini
+from .bot_image import bot_gemini
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 def home(request):
     if request.user.is_authenticated:
@@ -50,11 +53,24 @@ def LogoutPage(request):
 def send_message(request):
     if request.method == 'POST':
         message = request.POST.get('message', '')
-        response_text = bot_gemini(message)
+        images = request.FILES.getlist('images')
+
+        # Save all uploaded images temporarily
+        image_paths = []
+        for image in images:
+            image_path = default_storage.save('temp/' + image.name, ContentFile(image.read()))
+            image_paths.append(default_storage.path(image_path))
+
+        response_text = bot_gemini(message, *image_paths)
         
         # Save the chat message to the database
-        Chat.objects.create(user=request.user, message=message, response=response_text)
-        
+        chat = Chat(user=request.user, message=message, response=response_text)
+        chat.save()
+
+        # Clean up: delete temporary uploaded images
+        for path in image_paths:
+            default_storage.delete(path)
+
         return JsonResponse({'response': response_text})
     else:
         return JsonResponse({'error': 'Invalid request method'})

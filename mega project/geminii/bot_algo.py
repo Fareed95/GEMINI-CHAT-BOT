@@ -1,13 +1,21 @@
 import textwrap
 import google.generativeai as genai
 from IPython.display import display, Markdown
+import PIL.Image
 
+# img = PIL.Image.open('geminii\my_image.png')
+
+
+    
+# img = PIL.Image.open('image.jpg')
 # Function to convert text to Markdown format
-def bot_gemini(user_input):
+def bot_gemini(img):
     def to_markdown(text):
         text = text.replace('•', '  *')
         return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+    
 
+    # img = PIL.Image.open('.my_image.png')
     # Set your API key directly (replace with your actual API key)
     GOOGLE_API_KEY = 'AIzaSyDLW0ZzUp32rgwCYVMsnTGNwuhn1ZOTels'
 
@@ -31,8 +39,8 @@ def bot_gemini(user_input):
 
     try:
         # Generate content based on user input
-        response = model.generate_content(user_input)
-
+        response = model.generate_content(["What is in the picture here?", img], stream=True)
+        response.resolve()
         # Extract and display the generated text content
         content = response.candidates[0].content.parts[0].text
         return content
@@ -41,4 +49,4 @@ def bot_gemini(user_input):
     except Exception as e:
         print(f"Error generating content: {e}")
 
-# print(bot_gemini("What is water?"))
+print(bot_gemini("geminii\my_image.jpg"))
